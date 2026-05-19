@@ -7,6 +7,7 @@ import json
 import os
 
 from .download import download_archives
+from .index import index_results, summary_as_dict
 from .manifest import OCR_INDEX_URL, build_manifest, split_manifest
 from .process import process_manifest
 from .search import search_manifest, stats_as_dicts
@@ -71,6 +72,14 @@ def build_parser() -> argparse.ArgumentParser:
     process.add_argument("--no-verify", action="store_true")
     process.add_argument("--keep-archives", action="store_true")
 
+    index = subparsers.add_parser(
+        "index-results",
+        help="build keyword-first JSONL files from page-level results",
+    )
+    index.add_argument("--results", required=True)
+    index.add_argument("--out-dir", required=True)
+    index.add_argument("--max-open-files", type=int, default=128)
+
     return parser
 
 
@@ -131,6 +140,11 @@ def main(argv: list[str] | None = None) -> None:
         print(json.dumps(asdict(summary), indent=2))
         if summary.failed:
             raise SystemExit(1)
+        return
+
+    if args.command == "index-results":
+        summary = index_results(args.results, args.out_dir, args.max_open_files)
+        print(json.dumps(summary_as_dict(summary), indent=2))
         return
 
     raise AssertionError(f"unhandled command: {args.command}")

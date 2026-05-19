@@ -47,6 +47,14 @@ python -m civil_war_search process \
   --cache-dir data/archive-cache
 ```
 
+Build keyword-first analysis files:
+
+```bash
+python -m civil_war_search index-results \
+  --results results/pages.jsonl \
+  --out-dir results/by-keyword
+```
+
 Install the optional C matcher before a real full-corpus run:
 
 ```bash
@@ -114,6 +122,9 @@ Step by step:
 8. Only after the result part is fully written and atomically renamed is the
    archive marked complete in the process state file.
 9. Completed archive parts are merged into the final `results/pages.jsonl`.
+10. `index-results` can then derive keyword-first files from the page-level
+    results without rerunning the OCR search. It expects current result rows
+    with `keyword_match_counts`.
 
 The final state file is the audit record. A complete run has every manifest
 archive listed in `completed_archives` and no remaining entries in
@@ -192,6 +203,39 @@ Options:
 - `--no-verify`: skip checksum validation when checksums exist.
 - `--keep-archives`: retain downloaded archives after search. This is not
   recommended on storage-constrained systems.
+
+### `index-results`
+
+Build analysis-friendly keyword files from `results/pages.jsonl`.
+
+```bash
+python -m civil_war_search index-results \
+  --results results/pages.jsonl \
+  --out-dir results/by-keyword
+```
+
+Outputs:
+
+- one JSONL file per keyword, such as `fort-sumter.jsonl`
+- `keyword-summary.csv`
+
+Each keyword JSONL row is copied from the page-level result and adds:
+
+- `keyword`: the specific keyword for that index file
+- `keyword_match_count`: occurrences for that keyword on the page
+- `keyword_snippets`: snippets for that keyword only
+
+Pages that match multiple keywords appear in multiple keyword files. This makes
+subset analysis simple: choose the keyword files of interest, or inspect
+`keyword-summary.csv` first.
+
+Options:
+
+- `--results`: page-level JSONL output from `process` or `search`.
+- `--out-dir`: output directory for keyword files and summary CSV. Use an empty
+  directory for a fresh index.
+- `--max-open-files`: maximum keyword files open at once. Lower this if the
+  operating system has a small file descriptor limit.
 
 ### `download` and `search`
 

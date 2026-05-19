@@ -46,6 +46,9 @@ def _json_record(
         "archive": archive.filename,
         "archive_url": archive.url,
         "matched_keywords": sorted(matches),
+        "keyword_match_counts": {
+            keyword: len(positions) for keyword, positions in sorted(matches.items())
+        },
         "match_count": sum(len(positions) for positions in matches.values()),
         "snippets": snippets,
     }

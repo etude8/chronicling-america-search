@@ -54,3 +54,4 @@ def test_search_archive_streams_date_filtered_page_hits(tmp_path) -> None:
     assert stats.matched_pages == 1
     assert rows[0]["date"] == "1863-05-01"
     assert rows[0]["matched_keywords"] == ["fort sumter"]
+    assert rows[0]["keyword_match_counts"] == {"fort sumter": 1}
