@@ -1,0 +1,87 @@
+keyword,pages,occurrences,filename
+abduction,1,1,abduction.jsonl
+acquitted,17,19,acquitted.jsonl
+arrested,93,218,arrested.jsonl
+arson,4,4,arson.jsonl
+assault,46,75,assault.jsonl
+assault and battery,26,40,assault-and-battery.jsonl
+attempt at burglary,1,1,attempt-at-burglary.jsonl
+auxiliary guard,5,5,auxiliary-guard.jsonl
+board of police,2,4,board-of-police.jsonl
+bound over,2,2,bound-over.jsonl
+bowie knife,3,3,bowie-knife.jsonl
+brothel,1,1,brothel.jsonl
+brought before the court,1,1,brought-before-the-court.jsonl
+burglary,3,3,burglary.jsonl
+central guardhouse,9,10,central-guardhouse.jsonl
+colored,86,160,colored.jsonl
+committed,83,154,committed.jsonl
+committed to jail,21,25,committed-to-jail.jsonl
+concealed weapon,3,4,concealed-weapon.jsonl
+confined,36,44,confined.jsonl
+constable,15,19,constable.jsonl
+contraband,12,12,contraband.jsonl
+counterfeit,11,14,counterfeit.jsonl
+criminal court,25,29,criminal-court.jsonl
+deserter,6,6,deserter.jsonl
+deserters,3,3,deserters.jsonl
+desertion,5,5,desertion.jsonl
+dirk,2,2,dirk.jsonl
+discharged,64,92,discharged.jsonl
+dismissed,34,48,dismissed.jsonl
+disorderly conduct,9,9,disorderly-conduct.jsonl
+drunk and disorderly,35,50,drunk-and-disorderly.jsonl
+embezzlement,2,2,embezzlement.jsonl
+entice,1,1,entice.jsonl
+false pretences,1,1,false-pretences.jsonl
+false pretenses,3,3,false-pretenses.jsonl
+fine,152,569,fine.jsonl
+fined,49,114,fined.jsonl
+forgery,7,9,forgery.jsonl
+fraud,12,15,fraud.jsonl
+free negro,6,7,free-negro.jsonl
+fugitive from justice,1,1,fugitive-from-justice.jsonl
+fugitive slave,15,16,fugitive-slave.jsonl
+furlough,5,5,furlough.jsonl
+gambling,1,1,gambling.jsonl
+government property,10,11,government-property.jsonl
+guard house,19,21,guard-house.jsonl
+guardhouse,27,36,guardhouse.jsonl
+horse stealing,1,1,horse-stealing.jsonl
+indecent exposure,3,3,indecent-exposure.jsonl
+insanity,7,11,insanity.jsonl
+intemperance,2,2,intemperance.jsonl
+intent to kill,9,11,intent-to-kill.jsonl
+intoxication,5,6,intoxication.jsonl
+kidnapping,2,2,kidnapping.jsonl
+larceny,18,24,larceny.jsonl
+mania a potu,2,2,mania-a-potu.jsonl
+metropolitan police,4,5,metropolitan-police.jsonl
+murder,35,52,murder.jsonl
+outrages,3,3,outrages.jsonl
+patrolmen,1,1,patrolmen.jsonl
+perjury,3,4,perjury.jsonl
+petit larceny,3,3,petit-larceny.jsonl
+pickpocket,3,3,pickpocket.jsonl
+police commissioner,1,1,police-commissioner.jsonl
+profanity,16,21,profanity.jsonl
+provost guard,1,1,provost-guard.jsonl
+provost marshal,3,3,provost-marshal.jsonl
+rape,1,1,rape.jsonl
+resisting officer,1,1,resisting-officer.jsonl
+riot,27,41,riot.jsonl
+rioting,2,2,rioting.jsonl
+robbery,15,16,robbery.jsonl
+security,61,84,security.jsonl
+slave trade,17,21,slave-trade.jsonl
+spirituous liquors,1,1,spirituous-liquors.jsonl
+station house,4,5,station-house.jsonl
+suspicion,23,24,suspicion.jsonl
+swindlers,4,4,swindlers.jsonl
+taken up,38,62,taken-up.jsonl
+threats of violence,5,5,threats-of-violence.jsonl
+trial room,1,1,trial-room.jsonl
+vagrancy,4,4,vagrancy.jsonl
+vagrant,7,7,vagrant.jsonl
+watch house,9,10,watch-house.jsonl
+workhouse,38,63,workhouse.jsonl

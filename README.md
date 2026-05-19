@@ -61,6 +61,24 @@ Install the optional C matcher before a real full-corpus run:
 uv sync --extra speedups
 ```
 
+## Enforced LOC Rate Limits
+
+The tool paces outbound LOC requests by service class so worker-based commands
+do not accidentally trigger a long block:
+
+- JSON/YAML search and data API: 20 requests per minute, with a 1-hour block
+  penalty if exceeded. The built-in limiter intentionally uses an 18-request
+  sliding window plus extra spacing margin to leave headroom under the hard cap.
+- text/image/media microservices: 150 requests per minute
+- streaming/media services: conservatively modeled as 60 requests per minute
+- bulk data and OCR: 10 requests per 10-minute window per IP address
+
+The constants live in `civil_war_search/rate_limits.py`. The title manifest
+uses the JSON API limiter, title text search uses the microservice limiter, and
+bulk archive manifest/download requests use the bulk OCR limiter. The limiters
+enforce both minimum request spacing and a sliding request window; if LOC returns
+HTTP 429, all workers share the retry cooldown before making another request.
+
 ## Fast Title-Focused Workflow
 
 Use the title-focused workflow when you care about one newspaper title and want
@@ -75,7 +93,8 @@ python -m civil_war_search title-manifest \
   --lccn sn83045462 \
   --start-date 1861-01-01 \
   --end-date 1865-12-31 \
-  --out data/evening-star-1861-1865.jsonl
+  --out data/evening-star-1861-1865.jsonl \
+  --progress-every 25
 ```
 
 Then search those pages through LOC text-service URLs:
@@ -117,6 +136,24 @@ This mode is designed for fast, practical collection building. It uses LOC's
 title calendar, issue JSON, page files, and text-service URLs rather than the
 bulk OCR archives. It is not a replacement for the complete bulk OCR process
 when you need to prove that every OCR page in a broad corpus was searched.
+
+The title commands print progress by default. Use `--quiet` to suppress it,
+`--progress-every` to control update frequency, and `--timeout` to limit how
+long one LOC request can wait before retrying or recording a failure.
+`title-manifest` is resumable: rerunning the same command keeps complete issues
+already present in the output file, drops obviously incomplete issue rows, and
+fetches the remaining issues. LOC rate limits are enforced in code: JSON API
+requests are paced below the 20 per minute cap, and
+text/image/media microservice requests are limited to 150 per minute.
+`--workers` can overlap slow network responses, but it does not raise the
+request-start rate above those limits.
+Issue fetching is processed in bounded batches so interruption is quick and
+reruns can resume from completed issue rows.
+
+At the default JSON API pace, the Evening Star 1861-1865 manifest is expected
+to take at least about 90 minutes for roughly 1,484 issue records, plus calendar
+requests, retries, and slow responses. The page-text search lower bound is
+roughly `pages / 150` minutes.
 
 ## Example Workflow: Curated Primary Source Corpus
 
@@ -180,6 +217,11 @@ Peak storage is roughly:
 In practice, tens of GB should be enough unless the keyword list produces very
 large result files. The original OCR archives are not retained unless
 `--keep-archives` is used.
+
+Bulk OCR archive requests are rate-limited to 10 requests per 10-minute window
+per IP address. The default storage-constrained workflow remains complete, but
+the download side is intentionally paced; archive transfer time is often longer
+than the limiter delay for large files.
 
 For easier scheduling, split the full manifest into smaller chunks:
 
@@ -362,8 +404,16 @@ Options:
   `<out>.failures.jsonl`.
 - `--retries`: retry count for LOC requests.
 - `--retry-sleep`: seconds to wait between retries.
-- `--request-sleep`: polite delay between LOC requests.
+- `--request-sleep`: extra delay after completed requests. Defaults to `0`
+  because the JSON API rate limiter already paces below the 20 requests per
+  minute cap.
+- `--timeout`: seconds to wait for one LOC request before retry/failure.
+- `--progress-every`: issue interval for progress updates.
+- `--workers`: parallel issue JSON workers. Defaults to `2`; request starts are
+  still paced below the 20 per minute cap.
+- `--batch-size`: number of issue requests queued at once. Defaults to `50`.
 - `--max-issues`: process only the first N issues; useful for smoke tests.
+- `--quiet`: disable progress output.
 - `--strict`: exit nonzero if any issue fails.
 
 ### `search-title`
@@ -392,8 +442,15 @@ Options:
   `<out>.failures.jsonl`.
 - `--retries`: retry count for LOC text-service requests.
 - `--retry-sleep`: seconds to wait between retries.
-- `--request-sleep`: polite delay between page text requests.
+- `--request-sleep`: extra delay after completed page text requests. Defaults
+  to `0` because the microservice limiter already enforces 150 requests per
+  minute.
 - `--snippet-radius`: characters of normalized context around each first match.
+- `--timeout`: seconds to wait for one LOC request before retry/failure.
+- `--progress-every`: page interval for progress updates.
+- `--workers`: parallel page text workers. Defaults to `2`; request starts are
+  still limited to 150 per minute.
+- `--quiet`: disable progress output.
 - `--strict`: exit nonzero if any page fails.
 
 ### `download` and `search`

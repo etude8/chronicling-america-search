@@ -8,6 +8,8 @@ from typing import Any, Iterable
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
+from .rate_limits import LOC_BULK_OCR_LIMITER, is_bulk_ocr_url
+
 
 OCR_INDEX_URL = "https://chroniclingamerica.loc.gov/data/ocr/"
 OCR_JSON_URL = OCR_INDEX_URL
@@ -27,6 +29,8 @@ class ArchiveRecord:
 
 
 def read_url(url: str = OCR_INDEX_URL) -> tuple[str, str]:
+    if is_bulk_ocr_url(url):
+        LOC_BULK_OCR_LIMITER.wait()
     request = Request(
         url,
         headers={

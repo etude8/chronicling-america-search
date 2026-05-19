@@ -7,6 +7,7 @@ import shutil
 from urllib.request import Request, urlopen
 
 from .manifest import ArchiveRecord, read_manifest, write_manifest
+from .rate_limits import LOC_BULK_OCR_LIMITER, is_bulk_ocr_url
 
 
 def sha1_file(path: Path, block_size: int = 1024 * 1024) -> str:
@@ -30,6 +31,8 @@ def download_record(record: ArchiveRecord, output_dir: str, verify: bool) -> Arc
             return record
 
     temp_target = target.with_suffix(target.suffix + ".part")
+    if is_bulk_ocr_url(record.url):
+        LOC_BULK_OCR_LIMITER.wait()
     request = Request(record.url, headers={"User-Agent": "civil-war-search/0.1"})
     try:
         with urlopen(request, timeout=120) as response, temp_target.open("wb") as handle:

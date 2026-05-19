@@ -2,12 +2,87 @@ from __future__ import annotations
 
 from datetime import date
 import json
+import time
+from urllib.error import HTTPError
 
+from civil_war_search.rate_limits import RateLimit
 from civil_war_search.title_api import (
+    _chunked,
+    _load_resumable_title_rows,
+    _progress_line,
+    _retry_delay,
     issue_urls_from_calendar,
     page_records_from_issue,
     search_title_manifest,
 )
+
+
+def test_progress_line_includes_counts_and_eta() -> None:
+    line = _progress_line("label", 5, 10, time.monotonic() - 5, extra="ok=5")
+
+    assert "label: 5/10" in line
+    assert "elapsed=" in line
+    assert "eta=" in line
+    assert "ok=5" in line
+
+
+def test_chunked_splits_values() -> None:
+    assert list(_chunked(["a", "b", "c"], 2)) == [["a", "b"], ["c"]]
+
+
+def test_retry_delay_uses_exponential_backoff_without_base_sleep() -> None:
+    assert _retry_delay(Exception("x"), 3, 0) == 0
+
+
+def test_retry_delay_uses_rate_limit_cooldown_for_429() -> None:
+    error = HTTPError(
+        url="https://www.loc.gov/item/sn83045462/?fo=json",
+        code=429,
+        msg="Too Many Requests",
+        hdrs={},
+        fp=None,
+    )
+    limit = RateLimit(
+        name="test",
+        requests=20,
+        window_seconds=60,
+        safety_margin_seconds=0.25,
+    )
+
+    assert _retry_delay(error, 0, 2, limit) == 60.25
+
+
+def test_load_resumable_title_rows_drops_incomplete_issue(tmp_path) -> None:
+    output = tmp_path / "title-manifest.jsonl"
+    complete_issue = "https://www.loc.gov/item/sn83045462/1861-01-01/ed-1/"
+    incomplete_issue = "https://www.loc.gov/item/sn83045462/1861-01-02/ed-1/"
+    rows = [
+        {
+            "issue_url": complete_issue,
+            "page_number": 1,
+            "medium": "2 pages",
+        },
+        {
+            "issue_url": complete_issue,
+            "page_number": 2,
+            "medium": "2 pages",
+        },
+        {
+            "issue_url": incomplete_issue,
+            "page_number": 1,
+            "medium": "2 pages",
+        },
+    ]
+    output.write_text(
+        "".join(json.dumps(row) + "\n" for row in rows),
+        encoding="utf-8",
+    )
+
+    kept_rows, completed, dropped = _load_resumable_title_rows(output)
+
+    assert completed == {complete_issue}
+    assert dropped == 1
+    assert [row["issue_url"] for row in kept_rows] == [complete_issue, complete_issue]
 
 
 def test_issue_urls_from_calendar_filters_date_range() -> None:
@@ -136,6 +211,8 @@ def test_search_title_manifest_uses_text_service_json(tmp_path) -> None:
         failures_path=str(failures),
         request_sleep=0,
         retry_sleep=0,
+        progress=False,
+        workers=2,
     )
 
     rows = [json.loads(line) for line in output.read_text().splitlines()]
@@ -193,6 +270,8 @@ def test_search_title_manifest_applies_keyword_groups(tmp_path) -> None:
         request_sleep=0,
         retry_sleep=0,
         keyword_groups_path=str(groups),
+        progress=False,
+        workers=2,
     )
 
     rows = [json.loads(line) for line in output.read_text().splitlines()]

@@ -59,6 +59,17 @@ python -m civil_war_search title-manifest \
   --out data/evening-star-1861-1865.jsonl
 ```
 
+Expected runtime: at least about 90 minutes for the full 1861-1865 Evening Star
+range. LOC's JSON API cap is 20 requests per minute, and the built-in limiter
+paces issue requests below that cap, with an 18-request sliding window and extra
+spacing margin. The command fetches five yearly calendars, then one JSON record
+per issue. Issue JSON requests use 2 workers by default, but a thread-safe
+sliding-window limiter controls request starts across all workers. If LOC
+returns HTTP 429, all workers share the retry cooldown before making another
+request. Requests are queued in 50-issue batches so interruption is quicker and
+reruns can resume. It prints progress with elapsed time, rate, ETA, pages found,
+and failures. The default timeout is 20 seconds for any single issue request.
+
 Run the grouped legal search:
 
 ```bash
@@ -68,12 +79,70 @@ python -m civil_war_search search-title \
   --out results/evening-star-legal-grouped.jsonl
 ```
 
+Expected runtime: at least `pages / 150` minutes under LOC's text-service
+microservice limit, then longer if there are retries or slow responses. Page
+text requests use 2 workers by default, but request starts are limited to 150
+per minute. This step prints page progress with searched, matched, failed,
+elapsed time, rate, and ETA.
+
 Build keyword-first files for analysis:
 
 ```bash
 python -m civil_war_search index-results \
   --results results/evening-star-legal-grouped.jsonl \
   --out-dir results/evening-star-legal-by-keyword
+```
+
+Expected runtime: usually seconds for a title-focused result set because it only
+reorganizes the local JSONL results.
+
+## Progress and Runtime Controls
+
+Both title-focused network commands print progress by default.
+
+Useful options:
+
+```bash
+--progress-every 10
+--timeout 20
+--workers 2
+--request-sleep 0
+--quiet
+```
+
+- `--progress-every` controls how often progress is printed.
+- `--timeout` limits how long one LOC request can wait before retry/failure.
+- `--workers` controls parallel LOC requests. The default is `2` for
+  `title-manifest` and `2` for `search-title`. Workers overlap slow responses;
+  they do not raise the enforced request-start rate.
+- `--request-sleep` adds delay after each completed request. The default is `0`
+  because built-in rate limiters already pace below LOC caps.
+- `--batch-size` controls how many issue requests `title-manifest` queues at
+  once. The default is `50`.
+- `--quiet` disables progress output.
+
+If LOC starts returning failures or timing out, rerun with:
+
+```bash
+--workers 1 --request-sleep 1
+```
+
+`title-manifest` is resumable. If it is interrupted, rerun the same command. It
+keeps complete issues already in the output file, drops obviously incomplete
+issue rows, and fetches the remaining issues. Network retries use exponential
+backoff with a small amount of jitter so repeated failures slow down instead of
+hammering LOC.
+
+For a short smoke test before the full run:
+
+```bash
+python -m civil_war_search title-manifest \
+  --lccn sn83045462 \
+  --start-date 1861-01-01 \
+  --end-date 1865-12-31 \
+  --out /tmp/evening-star-smoke.jsonl \
+  --max-issues 5 \
+  --progress-every 1
 ```
 
 ## What to Inspect First

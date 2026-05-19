@@ -96,8 +96,13 @@ def build_parser() -> argparse.ArgumentParser:
     title_manifest.add_argument("--failures")
     title_manifest.add_argument("--retries", type=int, default=2)
     title_manifest.add_argument("--retry-sleep", type=float, default=2.0)
-    title_manifest.add_argument("--request-sleep", type=float, default=0.1)
+    title_manifest.add_argument("--request-sleep", type=float, default=0.0)
     title_manifest.add_argument("--max-issues", type=int)
+    title_manifest.add_argument("--timeout", type=int, default=20)
+    title_manifest.add_argument("--progress-every", type=int, default=25)
+    title_manifest.add_argument("--workers", type=int, default=2)
+    title_manifest.add_argument("--batch-size", type=int, default=50)
+    title_manifest.add_argument("--quiet", action="store_true")
     title_manifest.add_argument("--strict", action="store_true")
 
     search_title = subparsers.add_parser(
@@ -111,8 +116,12 @@ def build_parser() -> argparse.ArgumentParser:
     search_title.add_argument("--failures")
     search_title.add_argument("--retries", type=int, default=2)
     search_title.add_argument("--retry-sleep", type=float, default=2.0)
-    search_title.add_argument("--request-sleep", type=float, default=0.05)
+    search_title.add_argument("--request-sleep", type=float, default=0.0)
     search_title.add_argument("--snippet-radius", type=int, default=80)
+    search_title.add_argument("--timeout", type=int, default=30)
+    search_title.add_argument("--progress-every", type=int, default=100)
+    search_title.add_argument("--workers", type=int, default=2)
+    search_title.add_argument("--quiet", action="store_true")
     search_title.add_argument("--strict", action="store_true")
 
     return parser
@@ -193,6 +202,11 @@ def main(argv: list[str] | None = None) -> None:
             retry_sleep=args.retry_sleep,
             request_sleep=args.request_sleep,
             max_issues=args.max_issues,
+            timeout=args.timeout,
+            progress_every=args.progress_every,
+            progress=not args.quiet,
+            workers=args.workers,
+            batch_size=args.batch_size,
         )
         print(json.dumps(title_summary_as_dict(summary), indent=2))
         if args.strict and summary.failed_issues:
@@ -210,6 +224,10 @@ def main(argv: list[str] | None = None) -> None:
             request_sleep=args.request_sleep,
             snippet_radius=args.snippet_radius,
             keyword_groups_path=args.keyword_groups,
+            timeout=args.timeout,
+            progress_every=args.progress_every,
+            progress=not args.quiet,
+            workers=args.workers,
         )
         print(json.dumps(title_summary_as_dict(summary), indent=2))
         if args.strict and summary.failed_pages:
