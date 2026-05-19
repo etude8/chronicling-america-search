@@ -61,6 +61,63 @@ Install the optional C matcher before a real full-corpus run:
 uv sync --extra speedups
 ```
 
+## Fast Title-Focused Workflow
+
+Use the title-focused workflow when you care about one newspaper title and want
+structured page metadata, PDF links, image links, and fast results more than a
+full bulk-corpus audit.
+
+For example, the Evening Star has LCCN `sn83045462`. Build a page manifest for
+1861-1865:
+
+```bash
+python -m civil_war_search title-manifest \
+  --lccn sn83045462 \
+  --start-date 1861-01-01 \
+  --end-date 1865-12-31 \
+  --out data/evening-star-1861-1865.jsonl
+```
+
+Then search those pages through LOC text-service URLs:
+
+```bash
+python -m civil_war_search search-title \
+  --title-manifest data/evening-star-1861-1865.jsonl \
+  --keywords keywords.txt \
+  --out results/evening-star-hits.jsonl
+```
+
+For legal-focused exploratory work, use grouped keywords to require broad terms
+to co-occur with stronger legal or police anchors:
+
+```bash
+python -m civil_war_search search-title \
+  --title-manifest data/evening-star-1861-1865.jsonl \
+  --keyword-groups configs/evening_star_legal_keyword_groups.json \
+  --out results/evening-star-legal-grouped.jsonl
+```
+
+The title manifest includes fields such as:
+
+- `lccn`
+- `title`
+- `date`
+- `edition`
+- `page_number`
+- `issue_url`
+- `page_url`
+- `pdf_url`
+- `image_url`
+- `jp2_url`
+- `alto_xml_url`
+- `text_url`
+- `iiif_info_url`
+
+This mode is designed for fast, practical collection building. It uses LOC's
+title calendar, issue JSON, page files, and text-service URLs rather than the
+bulk OCR archives. It is not a replacement for the complete bulk OCR process
+when you need to prove that every OCR page in a broad corpus was searched.
+
 ## Example Workflow: Curated Primary Source Corpus
 
 This tool can help a researcher build a focused set of primary sources without
@@ -282,6 +339,62 @@ Options:
   directory for a fresh index.
 - `--max-open-files`: maximum keyword files open at once. Lower this if the
   operating system has a small file descriptor limit.
+
+### `title-manifest`
+
+Build a structured page manifest for one Chronicling America title and date
+range.
+
+```bash
+python -m civil_war_search title-manifest \
+  --lccn sn83045462 \
+  --start-date 1861-01-01 \
+  --end-date 1865-12-31 \
+  --out data/evening-star-1861-1865.jsonl
+```
+
+Options:
+
+- `--lccn`: title LCCN, such as `sn83045462` for Evening Star.
+- `--start-date` / `--end-date`: ISO date range.
+- `--out`: JSONL page manifest output.
+- `--failures`: optional issue-failure JSONL path. Defaults to
+  `<out>.failures.jsonl`.
+- `--retries`: retry count for LOC requests.
+- `--retry-sleep`: seconds to wait between retries.
+- `--request-sleep`: polite delay between LOC requests.
+- `--max-issues`: process only the first N issues; useful for smoke tests.
+- `--strict`: exit nonzero if any issue fails.
+
+### `search-title`
+
+Search a `title-manifest` file through its page text-service URLs.
+
+```bash
+python -m civil_war_search search-title \
+  --title-manifest data/evening-star-1861-1865.jsonl \
+  --keywords keywords.txt \
+  --out results/evening-star-hits.jsonl
+```
+
+The output uses the same match fields as the bulk workflow:
+`matched_keywords`, `keyword_match_counts`, `match_count`, and `snippets`, while
+preserving the structured page fields and media links from the title manifest.
+
+Options:
+
+- `--title-manifest`: JSONL page manifest from `title-manifest`.
+- `--keywords`: one keyword or phrase per line.
+- `--keyword-groups`: JSON keyword group config. Use this instead of
+  `--keywords` when broad terms should require legal/police anchor co-occurrence.
+- `--out`: JSONL hit output.
+- `--failures`: optional page-failure JSONL path. Defaults to
+  `<out>.failures.jsonl`.
+- `--retries`: retry count for LOC text-service requests.
+- `--retry-sleep`: seconds to wait between retries.
+- `--request-sleep`: polite delay between page text requests.
+- `--snippet-radius`: characters of normalized context around each first match.
+- `--strict`: exit nonzero if any page fails.
 
 ### `download` and `search`
 

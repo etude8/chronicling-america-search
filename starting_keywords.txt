@@ -1,0 +1,152 @@
+guard house
+guardhouse
+watch house
+station house
+trial room
+lock-up
+police precinct
+metropolitan police
+auxillary guard
+police returns
+ward returns
+watch returns
+patrolman
+constable
+provost guard
+police superintendent
+board of police
+central guardhouse
+police commissioner
+assault and battery
+assault
+intent to kill
+murder
+attempt at murder
+rape
+attempt at rape
+abduction
+kidnapping
+rioting
+riot
+fighting in the streets
+threats of violence
+resisting officer
+assaulting policeman
+disorderly conduct
+drunk and disorderly
+intoxication
+habitual drunkenness
+fast driving
+indecent exposure
+perjury
+bigamy
+adultery
+bastardy
+insanity
+trespass
+profanity
+vagrancy
+vagrant
+loitering
+keeping disorderly house
+keeping baudy house
+interfering with police
+aiding escape
+accessory to murder
+witness to murder
+grand larceny
+petit larceny
+larceny
+pickpocket
+robbery
+burglary
+attempt at burglary
+arson
+attempt at arson
+fraud
+forgery
+gambling
+malicious mischief
+receiving stolen goods
+counterfeit
+passing counterfeit money
+suspicion
+false pretences
+false pretenses
+embezzlement
+horse stealing
+cruelty to animals
+selling lottery tickets
+violation of corporation ordinances
+corporation law
+workhouse
+lashes
+fined
+fine
+committed to jail
+dismissed
+bound over
+sent to the military
+criminal court
+turned over to military
+discharged
+security
+confined
+acquitted
+disorderly soldiers
+drunk soldiers
+deserter
+desertion
+fugitive from justice
+furlough
+government property
+military offenders
+roving gangs
+provost marshal
+selling liquor to soldiers
+smuggling liquor
+outrages
+contraband
+fugitive slave
+runaway slave
+colored
+free negro
+kidnapping
+slave trade
+interracial
+curfew
+colored church
+colored residents
+entice
+cohabituation
+house of prostitution
+bawdy house
+brothel
+fancy house
+Marble Alley
+houses of ill-fame
+tippling house
+tavern license
+shop license
+liquor license
+spirituous liquors
+intemperance
+confidence operator
+swindler
+blackleg
+arrested
+taken up
+taken into custody
+committed
+brought before the court
+mania-a-potu
+making night hideous
+pest to our citizens
+garrotted
+treasonable language
+concealed weapon
+bowie-knife
+dirk
+pistol
+house of correction
+boy thieves

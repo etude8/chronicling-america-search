@@ -1,0 +1,228 @@
+{
+  "description": "Pilot keyword groups for an Evening Star legal/police search, 1861-1865. Groups with require_any only count when at least one required anchor group also matches on the same page.",
+  "groups": [
+    {
+      "name": "police_legal_anchors",
+      "keywords": [
+        "guard house",
+        "guardhouse",
+        "watch house",
+        "station house",
+        "trial room",
+        "police precinct",
+        "metropolitan police",
+        "auxiliary guard",
+        "auxillary guard",
+        "police returns",
+        "ward returns",
+        "watch returns",
+        "patrolman",
+        "patrolmen",
+        "constable",
+        "provost guard",
+        "police superintendent",
+        "board of police",
+        "central guardhouse",
+        "police commissioner",
+        "criminal court",
+        "brought before the court",
+        "provost marshal",
+        "house of correction",
+        "workhouse"
+      ]
+    },
+    {
+      "name": "specific_offenses",
+      "keywords": [
+        "assault and battery",
+        "intent to kill",
+        "attempt at murder",
+        "attempt at rape",
+        "abduction",
+        "kidnapping",
+        "fighting in the streets",
+        "threats of violence",
+        "resisting officer",
+        "assaulting policeman",
+        "disorderly conduct",
+        "drunk and disorderly",
+        "habitual drunkenness",
+        "fast driving",
+        "indecent exposure",
+        "keeping disorderly house",
+        "keeping bawdy house",
+        "keeping baudy house",
+        "interfering with police",
+        "aiding escape",
+        "accessory to murder",
+        "witness to murder",
+        "grand larceny",
+        "petit larceny",
+        "pickpocket",
+        "attempt at burglary",
+        "attempt at arson",
+        "receiving stolen goods",
+        "passing counterfeit money",
+        "false pretences",
+        "false pretenses",
+        "horse stealing",
+        "cruelty to animals",
+        "selling lottery tickets",
+        "violation of corporation ordinances",
+        "concealed weapon",
+        "bowie knife",
+        "dirk",
+        "boy thieves"
+      ]
+    },
+    {
+      "name": "sentence_disposition_anchors",
+      "keywords": [
+        "fined",
+        "committed to jail",
+        "bound over",
+        "sent to the military",
+        "turned over to military",
+        "acquitted",
+        "confined",
+        "discharged",
+        "fugitive from justice"
+      ]
+    },
+    {
+      "name": "vice_liquor_anchors",
+      "keywords": [
+        "house of prostitution",
+        "bawdy house",
+        "baudy house",
+        "brothel",
+        "fancy house",
+        "Marble Alley",
+        "houses of ill-fame",
+        "tippling house",
+        "tavern license",
+        "shop license",
+        "liquor license",
+        "spirituous liquors",
+        "selling liquor to soldiers",
+        "smuggling liquor",
+        "mania-a-potu"
+      ]
+    },
+    {
+      "name": "military_police_anchors",
+      "keywords": [
+        "disorderly soldiers",
+        "drunk soldiers",
+        "deserter",
+        "deserters",
+        "desertion",
+        "military offenders",
+        "roving gangs",
+        "government property",
+        "furlough",
+        "treasonable language"
+      ]
+    },
+    {
+      "name": "broad_offenses_require_context",
+      "require_any": [
+        "police_legal_anchors",
+        "specific_offenses",
+        "sentence_disposition_anchors"
+      ],
+      "keywords": [
+        "assault",
+        "murder",
+        "rape",
+        "rioting",
+        "riot",
+        "perjury",
+        "bigamy",
+        "adultery",
+        "bastardy",
+        "insanity",
+        "trespass",
+        "profanity",
+        "vagrancy",
+        "vagrant",
+        "loitering",
+        "larceny",
+        "robbery",
+        "burglary",
+        "arson",
+        "fraud",
+        "forgery",
+        "gambling",
+        "counterfeit",
+        "suspicion",
+        "embezzlement"
+      ]
+    },
+    {
+      "name": "broad_dispositions_require_context",
+      "require_any": [
+        "police_legal_anchors",
+        "specific_offenses",
+        "sentence_disposition_anchors"
+      ],
+      "keywords": [
+        "fine",
+        "dismissed",
+        "security",
+        "committed",
+        "arrested",
+        "taken up",
+        "taken into custody"
+      ]
+    },
+    {
+      "name": "race_slavery_require_context",
+      "require_any": [
+        "police_legal_anchors",
+        "specific_offenses",
+        "sentence_disposition_anchors",
+        "military_police_anchors"
+      ],
+      "keywords": [
+        "contraband",
+        "fugitive slave",
+        "runaway slave",
+        "colored",
+        "free negro",
+        "slave trade",
+        "interracial",
+        "curfew",
+        "colored church",
+        "colored residents",
+        "entice",
+        "cohabitation",
+        "cohabituation"
+      ]
+    },
+    {
+      "name": "slang_and_descriptors_require_context",
+      "require_any": [
+        "police_legal_anchors",
+        "specific_offenses",
+        "sentence_disposition_anchors",
+        "vice_liquor_anchors"
+      ],
+      "keywords": [
+        "intoxication",
+        "intemperance",
+        "confidence operator",
+        "swindler",
+        "swindlers",
+        "blackleg",
+        "blacklegs",
+        "outrages",
+        "making night hideous",
+        "pest to our citizens",
+        "garroted",
+        "garrotted",
+        "garotted"
+      ]
+    }
+  ]
+}
