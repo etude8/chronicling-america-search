@@ -61,6 +61,52 @@ Install the optional C matcher before a real full-corpus run:
 uv sync --extra speedups
 ```
 
+## Example Workflow: Curated Primary Source Corpus
+
+This tool can help a researcher build a focused set of primary sources without
+manually reading millions of pages first.
+
+For example, a project about wartime language around emancipation might start
+with `keywords.txt` like this:
+
+```text
+emancipation proclamation
+contraband
+freedmen
+colored troops
+fugitive slaves
+```
+
+Run the complete page-level search:
+
+```bash
+python -m civil_war_search process \
+  --manifest data/manifest.jsonl \
+  --keywords keywords.txt \
+  --out results/emancipation-pages.jsonl \
+  --cache-dir data/archive-cache
+```
+
+Then build keyword-specific files:
+
+```bash
+python -m civil_war_search index-results \
+  --results results/emancipation-pages.jsonl \
+  --out-dir results/emancipation-by-keyword
+```
+
+The researcher can then use:
+
+- `results/emancipation-pages.jsonl` as the complete page-level corpus
+- `results/emancipation-by-keyword/keyword-summary.csv` to see which terms are
+  common enough for analysis
+- keyword files such as `contraband.jsonl` or `freedmen.jsonl` for close reading
+- `page_url` values to jump back to the original Chronicling America page image
+
+This gives a thesis or article a reproducible source-gathering method: the
+keyword list, manifest, process state, and JSONL results together show exactly
+how the corpus was assembled.
+
 ## Storage-Constrained Operation
 
 The `process` command is the recommended default. It is designed for systems
