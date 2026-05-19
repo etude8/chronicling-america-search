@@ -1,0 +1,21 @@
+[project]
+name = "civil-war"
+version = "0.1.0"
+description = "Search Chronicling America bulk OCR for Civil War-era keyword hits."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[project.optional-dependencies]
+speedups = ["pyahocorasick>=2.1.0"]
+test = ["pytest>=8.0"]
+
+[project.scripts]
+civil-war-search = "civil_war_search.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["civil_war_search*"]
